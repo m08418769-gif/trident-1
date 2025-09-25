@@ -17,6 +17,12 @@ buildscript {
         classpath 'io.github.gradle-nexus:publish-plugin:1.1.0'
         classpath 'com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:8.1.1'
     }
+    // 强制构建脚本使用安全的依赖版本
+    configurations.classpath {
+        resolutionStrategy {
+            force("commons-io:commons-io:2.14.0")
+        }
+    }
 }
 
 apply plugin: 'java'
@@ -36,22 +42,16 @@ allprojects {
     repositories {
         mavenCentral()
     }
-
+    
+    // 全局配置去重策略
     tasks.withType(Jar) {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
     
-    configurations.all {
-        resolutionStrategy {
-            force("com.squareup.okio:okio:3.9.0")
-            force("io.netty:netty-codec:4.1.125.Final")
-            force("io.netty:netty-codec-http:4.1.125.Final")
-            force("io.netty:netty-codec-http2:4.1.125.Final")
-            force("io.netty:netty-common:4.1.118.Final")
-            force("io.netty:netty-handler:4.1.118.Final")
-        }
-    }
-    
+    // 全局依赖版本管理
+
+
+
     tasks.withType(Javadoc).tap {
         configureEach {
             options.encoding = 'UTF-8'
@@ -77,9 +77,13 @@ allprojects {
 
     configurations.configureEach {
         resolutionStrategy {
-            force "com.google.guava:guava:$googleGuavaVersion"
-            force "commons-beanutils:commons-beanutils:1.11.0"
-            force "commons-io:commons-io:2.14.0"
+            force("com.google.guava:guava:$googleGuavaVersion")
+            force("com.squareup.okio:okio:3.9.0")
+            force("io.netty:netty-codec:4.1.125.Final")
+            force("io.netty:netty-codec-http:4.1.125.Final")
+            force("io.netty:netty-codec-http2:4.1.125.Final")
+            force("commons-beanutils:commons-beanutils:1.11.0")
+
         }
     }
 
