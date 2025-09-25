@@ -41,6 +41,17 @@ allprojects {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
     
+    configurations.all {
+        resolutionStrategy {
+            force("com.squareup.okio:okio:3.9.0")
+            force("io.netty:netty-codec:4.1.125.Final")
+            force("io.netty:netty-codec-http:4.1.125.Final")
+            force("io.netty:netty-codec-http2:4.1.125.Final")
+            force("io.netty:netty-common:4.1.118.Final")
+            force("io.netty:netty-handler:4.1.118.Final")
+        }
+    }
+    
     tasks.withType(Javadoc).tap {
         configureEach {
             options.encoding = 'UTF-8'
@@ -67,6 +78,8 @@ allprojects {
     configurations.configureEach {
         resolutionStrategy {
             force "com.google.guava:guava:$googleGuavaVersion"
+            force "commons-beanutils:commons-beanutils:1.11.0"
+            force "commons-io:commons-io:2.14.0"
         }
     }
 
