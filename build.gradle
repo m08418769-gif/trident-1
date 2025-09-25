@@ -37,7 +37,10 @@ allprojects {
         mavenCentral()
     }
 
-
+    tasks.withType(Jar) {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+    
     tasks.withType(Javadoc).tap {
         configureEach {
             options.encoding = 'UTF-8'
