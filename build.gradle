@@ -17,7 +17,6 @@ buildscript {
         classpath 'io.github.gradle-nexus:publish-plugin:1.1.0'
         classpath 'com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin:8.1.1'
     }
-    // 强制构建脚本使用安全的依赖版本
     configurations.classpath {
         resolutionStrategy {
             force("commons-io:commons-io:2.14.0")
@@ -42,15 +41,10 @@ allprojects {
     repositories {
         mavenCentral()
     }
-    
-    // 全局配置去重策略
+
     tasks.withType(Jar) {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
-    
-    // 全局依赖版本管理
-
-
 
     tasks.withType(Javadoc).tap {
         configureEach {
@@ -83,7 +77,6 @@ allprojects {
             force("io.netty:netty-codec-http:4.1.125.Final")
             force("io.netty:netty-codec-http2:4.1.125.Final")
             force("commons-beanutils:commons-beanutils:1.11.0")
-
         }
     }
 
