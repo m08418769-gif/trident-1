@@ -73,6 +73,9 @@ allprojects {
         resolutionStrategy {
             force("com.google.guava:guava:$googleGuavaVersion")
             force("com.squareup.okio:okio:3.9.0")
+            force("io.netty:netty-codec:4.1.125.Final")
+            force("io.netty:netty-codec-http:4.1.125.Final")
+            force("io.netty:netty-codec-http2:4.1.125.Final")
             force("commons-beanutils:commons-beanutils:1.11.0")
         }
     }
