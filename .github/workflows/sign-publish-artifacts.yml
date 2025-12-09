@@ -13,14 +13,11 @@ on:
         default: "io.github.tronprotocol"  
 
 jobs:
+
+
   download-from-s3-and-sign:
     name: Download from S3
     runs-on: self-hosted
-
-    # Define environment variables for reuse
-    env:
-      GROUP_PATH: ${{ inputs.project_group && replace(inputs.project_group, '.', '/') }}
-      DOWNLOAD_DIR: "./${{ env.GROUP_PATH }}/trident/${{ inputs.project_version }}"
 
     permissions:
       contents: read
@@ -36,6 +33,11 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_DEV_DOWNLOAD }} # 👈 replace with your IAM role
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Compute DOWNLOAD_DIR
+        run: |
+          GROUP_PATH=$(echo "${{ inputs.project_group }}" | tr '.' '/')
+          echo "DOWNLOAD_DIR=$GROUP_PATH/trident/${{ inputs.project_version }}" >> $GITHUB_ENV
 
       - name: Create download directory
         run: |
