@@ -106,7 +106,7 @@ jobs:
                                     {
                                         subproject.properties.configurations.implementation.allDependencies.each { dep ->
                                             {//println dep
-                                                if (dep.group != null && dep.name != null && dep.version != null && dep.group != artifactId) {
+                                                if (!(dep instanceof ProjectDependency) && dep.group != null && dep.name != null && dep.version != null && dep.group != artifactId) {
                                                     def dependencyIdentifier = "${dep.group}:${dep.name}:${dep.version}"
                                                     //drop duplicate
                                                     if (!seenDependencies.contains(dependencyIdentifier)) {
