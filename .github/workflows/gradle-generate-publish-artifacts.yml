@@ -49,7 +49,7 @@ jobs:
 
       # --- Regular Gradle build (with dependency verification) ---
       - name: Build project
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean build -x test -PVERSION=${{ inputs.project_version }} -PGROUP=${{ inputs.project_group }}
 
       # --- Create init.gradle for publishing ---
       - name: Create Gradle init script for publishing
