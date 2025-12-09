@@ -7,6 +7,10 @@ on:
         description: "Project version (e.g. 1.0.0)"
         required: true
         default: ""
+      project_group:
+        description: "Project group (e.g. io.github.tronprotocol)"
+        required: true
+        default: "io.github.tronprotocol"  
 
 jobs:
   download-from-s3-and-sign:
@@ -15,7 +19,8 @@ jobs:
 
     # Define environment variables for reuse
     env:
-      DOWNLOAD_DIR: "./io/github/tronprotocol/trident/${{ inputs.project_version }}"
+      GROUP_PATH: ${{ inputs.project_group && replace(inputs.project_group, '.', '/') }}
+      DOWNLOAD_DIR: "./${{ env.GROUP_PATH }}/trident/${{ inputs.project_version }}"
 
     permissions:
       contents: read
@@ -33,7 +38,11 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Create download directory
-        run: mkdir -p ${{ env.DOWNLOAD_DIR }}
+        run: |
+          if [ -d "${{ env.DOWNLOAD_DIR }}" ]; then
+            rm -rf "${{ env.DOWNLOAD_DIR }}"
+          fi
+          mkdir -p ${{ env.DOWNLOAD_DIR }}
 
       - name: Download files from S3
         run: |
@@ -91,14 +100,14 @@ jobs:
           for file in "${files[@]}"; do
             if [ -f "$file" ]; then
               echo "Signing $file"
-              # 生成GPG签名
+              # Generate GPG signature
               gpg --local-user ${{ secrets.GPG_FINGERPRINT }} --armor --detach-sign ${file}
-              # 生成校验和 (Mac系统专用命令)
+              # Generate checksums (macOS-specific commands)
               md5 ${file} | awk '{print $NF}' > ${file}.md5
               shasum -a 1 ${file} | awk '{print $1}' > ${file}.sha1
               shasum -a 256 ${file} | awk '{print $1}' > ${file}.sha256
               shasum -a 512 ${file} | awk '{print $1}' > ${file}.sha512
-              # 为签名文件生成校验和
+              # Generate checksums for the signature file
               md5 ${file}.asc | awk '{print $NF}' > ${file}.asc.md5
               shasum -a 1 ${file}.asc | awk '{print $1}' > ${file}.asc.sha1
               shasum -a 256 ${file}.asc | awk '{print $1}' > ${file}.asc.sha256
@@ -123,7 +132,7 @@ jobs:
       - name: Gzip files
         run: |
           rm -f trident-${{ inputs.project_version }}-bundle.zip
-          zip -r trident-${{ inputs.project_version }}-bundle.zip io/
+          zip -r trident-${{ inputs.project_version }}-bundle.zip ${DOWNLOAD_DIR}
           LOCAL_MD5=$(md5sum trident-${{ inputs.project_version }}-bundle.zip | awk '{print $1}')
           echo "trident-${{ inputs.project_version }}-bundle.zip: $LOCAL_MD5"
 
